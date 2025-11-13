@@ -17,6 +17,8 @@ DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_NAME = os.getenv("DB_NAME")
 DB_TABLE = os.getenv("DB_TABLE")
+print("Loaded from .env:", DB_HOST, DB_USER, DB_NAME)
+
 
 # --- Connect to the database ---
 engine = create_engine(f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}")
@@ -98,4 +100,50 @@ finally:
 
 # Part 1.3 Metric Discovery and Selection
 
+print("\n=== Part 1.3: Metric Discovery & Selection ===")
 
+# Query and normalize data
+query_metrics = f"""
+    SELECT data_source, metric, timestamp
+    FROM {DB_TABLE}
+    WHERE LOWER(data_source) IN ('hawkins', 'kinexon', 'vald')
+"""
+df_metrics = pd.read_sql(query_metrics, engine)
+df_metrics["data_source"] = df_metrics["data_source"].astype("string").str.lower().str.strip()
+df_metrics["metric"] = df_metrics["metric"].astype("string").str.strip()
+df_metrics["timestamp"] = pd.to_datetime(df_metrics["timestamp"], errors="coerce")
+
+# Helper to display top metrics
+def top_metrics(source_name):
+    sub = df_metrics[df_metrics["data_source"] == source_name]
+    if sub.empty:
+        print(f"\n⚠️ No metrics found for {source_name.capitalize()}")
+        return
+
+    counts = sub["metric"].value_counts().head(10)
+    top10_metrics = counts.index.tolist()
+
+    # Print only the metric names
+    print(f"\nTop 10 metrics for {source_name.capitalize()}:")
+    for metric in top10_metrics:
+        print(f"  • {metric}")
+
+    # Calculate stats for only those top 10 metrics
+    subset_top10 = sub[sub["metric"].isin(top10_metrics)]
+    total_top10_records = len(subset_top10)
+    date_start = subset_top10["timestamp"].min().date()
+    date_end = subset_top10["timestamp"].max().date()
+
+    print(f"\nSummary for {source_name.capitalize()}:")
+    print(f"  Total records (Top 10 metrics only): {total_top10_records:,}")
+    print(f"  Date range: {date_start} → {date_end}")
+    print()  # spacing between sources
+
+# Show top metrics per source
+for src in ["hawkins", "kinexon", "vald"]:
+    top_metrics(src)
+
+total_unique = df_metrics["metric"].nunique(dropna=True)
+print(f"\nTotal unique metrics across all sources: {total_unique}")
+
+print("\n✅ Metric discovery complete. Results printed above.")
