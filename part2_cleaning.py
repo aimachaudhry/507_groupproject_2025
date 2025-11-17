@@ -129,3 +129,64 @@ print(inactive_athletes)
 # 2.1d — Sufficient data to answer research question 
 
 
+# 2.2 Data Transformation (Group)
+
+# The dataset is currently in long format, meaning each row represents one metric for a given timestamp. 
+# For analysis, we need to convert it into wide format so that each row represents a single test session with all selected metrics.
+# This function:
+# - Takes a player name and the selected metrics
+# - Filters only the relevant player's data
+# - Pivots long → wide format (timestamp as rows, metrics as columns)
+# - Handles missing values
+# - Returns a clean DataFrame ready for part 3 modeling/visualization
+
+def transform_player_data(df, player_name, metric_list):
+    """
+    Transform long-format player data into wide-format for selected metrics.
+
+    Parameters:
+        df (DataFrame): Original long-format dataset
+        player_name (str): Player name string as stored in DB (e.g., "PLAYER_001")
+        metric_list (list): List of selected metric names
+
+    Returns:
+        DataFrame: Wide-format table (timestamp, metrics)
+    """
+
+    # Filter for selected player
+    player_df = df[df["playername"] == player_name]
+
+    # Only keep selected metrics
+    player_df = player_df[player_df["metric"].isin(metric_list)]
+
+    # Pivot table from long → wide format
+    wide_df = player_df.pivot_table(
+        index="timestamp",
+        columns="metric",
+        values="value",
+        aggfunc="first"
+    ).reset_index()
+
+    # Handle missing values
+    # Drop rows with all missing metrics
+    wide_df = wide_df.dropna(how="all", subset=metric_list)
+
+    # Fill remaining missing values using forward/backward fill
+    wide_df = wide_df.fillna(method="ffill").fillna(method="bfill")
+
+    return wide_df
+
+
+# ---- Test function on 3 different athletes ----
+test_players = [
+    df["playername"].unique()[0],
+    df["playername"].unique()[1],
+    df["playername"].unique()[2]
+]
+
+print("\n=== Testing transformation on 3 athletes ===")
+
+for p in test_players:
+    print(f"\nPlayer: {p}")
+    transformed = transform_player_data(df, p, selected_metrics)
+    print(transformed.head())
