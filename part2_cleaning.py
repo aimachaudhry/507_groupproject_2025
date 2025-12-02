@@ -190,3 +190,77 @@ for p in test_players:
     print(f"\nPlayer: {p}")
     transformed = transform_player_data(df, p, selected_metrics)
     print(transformed.head())
+
+
+# 2.3 Derived Metric in Colab
+import pandas as pd
+from scipy.stats import zscore
+
+print("\n=== 2.3 Derived Metric: Team Means & Relative Performance ===")
+
+# 2.3a — Calculate team mean for each metric
+team_metric_means = (
+    df.groupby(["metric", "team"])["value"]
+      .mean()
+      .reset_index(name="team_mean")
+)
+
+print("\n=== Team Means by Metric ===")
+for metric_name in selected_metrics:
+    metric_means = team_metric_means[team_metric_means["metric"] == metric_name]
+    print(f"\n{metric_name}:")
+    for _, row in metric_means.iterrows():
+        print(f"  {row['team']:<30}: {row['team_mean']:>10.2f}")
+
+# Merge into full dataset
+df_derived = df.merge(team_metric_means, on=["metric", "team"], how="left")
+
+# 2.3b — Percent difference from team mean
+df_derived["percent_diff"] = (
+    (df_derived["value"] - df_derived["team_mean"]) / df_derived["team_mean"]
+) * 100
+
+# 2.3c — Z-scores
+df_derived["z_score"] = (
+    df_derived.groupby(["metric", "team"])["value"].transform(zscore)
+)
+
+# 2.3d — Top 5 and Bottom 5 Performers (Unique Athletes)
+top_bottom_records = []
+top_performers_only = []
+
+for metric_name in selected_metrics:
+    metric_data = df_derived[df_derived["metric"] == metric_name].copy()
+
+    # Get the best performance for each unique athlete for this metric
+    athlete_best = metric_data.loc[metric_data.groupby("playername")["percent_diff"].idxmax()]
+    
+    # Now get top 5 and bottom 5 unique athletes
+    top5 = athlete_best.sort_values("percent_diff", ascending=False).head(5)
+    bottom5 = athlete_best.sort_values("percent_diff", ascending=True).head(5)
+
+    print(f"\n--- Metric: {metric_name} ---")
+    print("Top 5 performers (unique athletes):")
+    print(top5[["playername", "team", "value", "team_mean", "percent_diff","z_score", "session_type"]])
+
+    print("Bottom 5 performers (unique athletes):")
+    print(bottom5[["playername", "team", "value", "team_mean", "percent_diff","z_score", "session_type"]])
+
+    top_bottom_records.append(top5)
+    top_bottom_records.append(bottom5)
+    
+    # Store only top performers for separate CSV
+    top_performers_only.append(top5)
+
+# 2.3e — Save results
+if top_bottom_records:
+    top_bottom_df = pd.concat(top_bottom_records, ignore_index=True)
+    top_performers_df = pd.concat(top_performers_only, ignore_index=True)
+
+    df_derived.to_csv("part2_derived_metrics_full.csv", index=False)
+    top_bottom_df.to_csv("part2_top_bottom_performers.csv", index=False)
+    top_performers_df.to_csv("part2_top_five_performers.csv", index=False)
+
+    print("\nSaved part2_derived_metrics_full.csv")
+    print("Saved part2_top_bottom_performers.csv")
+    print("Saved part2_top_five_performers.csv")
