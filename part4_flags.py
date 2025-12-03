@@ -1,6 +1,15 @@
 import pandas as pd
+import os
+from dotenv import load_dotenv
+from sqlalchemy import create_engine, text
 
-INPUT_FILE = "part4_data.csv"         
+# Load database credentials
+load_dotenv()
+DB_HOST = os.getenv("DB_HOST")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_NAME = os.getenv("DB_NAME")
+
 OUTPUT_FILE = "part4_flagged_athletes.csv"
 
 # THRESHOLD 1 (CMJ / RSI)
@@ -17,13 +26,58 @@ LOW_DIST_RATIO_THRESHOLD = 0.80          # 20% below team median
 
 def main():
 
-    df = pd.read_csv(INPUT_FILE)
+    # Connect to database
+    engine = create_engine(f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}")
+    
+    # Query data from database
+    query = text("""
+        SELECT 
+            playername,
+            team,
+            timestamp as date,
+            CASE 
+                WHEN metric = 'Jump Height(m)' THEN value 
+                ELSE NULL 
+            END as cmj_height,
+            CASE 
+                WHEN metric = 'RSI' THEN value 
+                ELSE NULL 
+            END as rsi,
+            CASE 
+                WHEN metric = 'accel_load_accum' THEN value 
+                ELSE NULL 
+            END as aal,
+            CASE 
+                WHEN metric = 'distance_total' THEN value 
+                ELSE NULL 
+            END as total_distance
+        FROM research_experiment_refactor_test
+        WHERE metric IN ('Jump Height(m)', 'RSI', 'accel_load_accum', 'distance_total')
+        ORDER BY playername, timestamp
+    """)
+    
+    df_raw = pd.read_sql(query, engine)
+    
+    # Pivot data so each row has all metrics for a single timestamp/player
+    df = df_raw.groupby(['playername', 'team', 'date']).agg({
+        'cmj_height': 'first',
+        'rsi': 'first', 
+        'aal': 'first',
+        'total_distance': 'first'
+    }).reset_index()
+    
+    # Remove rows where all metric values are null
+    df = df.dropna(subset=['cmj_height', 'rsi', 'aal', 'total_distance'], how='all')
 
     # Make sure date is datetime
     df["date"] = pd.to_datetime(df["date"])
 
     # Sort per player by date
     df = df.sort_values(by=["playername", "date"]).reset_index(drop=True)
+    
+    print(f"Loaded {len(df)} records from database for analysis")
+    print(f"Date range: {df['date'].min()} to {df['date'].max()}")
+    print(f"Unique athletes: {df['playername'].nunique()}")
 
     # List to store all flags from all thresholds
     flagged_rows = []
