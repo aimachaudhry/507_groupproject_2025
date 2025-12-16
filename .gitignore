@@ -17,6 +17,8 @@ __pycache__/
 *.pkl
 *.xlsx
 !*_example.csv # Allow example files
+# Allow specific data files
+!part4_flagged_athletes.csv
 
 # IDEs
 .vscode/
