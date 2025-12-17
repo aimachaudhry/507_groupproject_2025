@@ -109,8 +109,25 @@ engine.dispose()
 ```
 Successful Connection:
 - **Aima**:
+
+<img width="600" height="300" alt="Screenshot 2025-12-16 at 2 46 58 PM" src="https://github.com/user-attachments/assets/866098be-6eb0-4370-93a1-84676a2d5c10" />
+
 - **Nabiha**:
+  
+<img width="600" height="300" alt="Screenshot 2025-12-17 at 12 25 44 AM" src="https://github.com/user-attachments/assets/61ab23a4-b9fb-444c-a1a6-f0e068a586f0" />
+
 - **Nawal**:
 - **Breanna**:
+<img width="600" height="300" alt="Screenshot 2025-12-17 at 12 28 13 AM" src="https://github.com/user-attachments/assets/dff80ee8-0984-4437-96f6-72019738a300" />
+
+
 - **Jenny**:
 - **Rujula**:
+
+## Running Each Script:
+
+### Part 1: Database Connection & Data Exploration
+```
+part1_exploration.py
+```
+Outputs summary statistics and metric counts by data source
