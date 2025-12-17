@@ -126,7 +126,61 @@ print(f"{len(inactive_athletes)} athletes not tested in the last 6 months")
 print(inactive_athletes)
 
 
-# 2.1d — Sufficient data to answer research question 
+# 2.1d — Sufficient data to answer research question
+
+print("\n=== 2.1d: Data Sufficiency Assessment ===")
+
+# Criteria for sufficient data:
+# 1. Each metric should have < 30% missing/zero values
+# 2. At least 70% of athletes per team should have ≥5 measurements per metric
+
+# Criterion 1: Check missing data threshold
+metrics_below_threshold = missing_summary[
+    missing_summary["percent_missing"] < 30
+]
+
+print(f"\nCriterion 1 - Missing Data:")
+print(f"  Metrics with <30% missing/zero values: {len(metrics_below_threshold)}/{len(selected_metrics)}")
+for metric in selected_metrics:
+    pct = missing_summary.loc[metric, "percent_missing"]
+    status = "✓ PASS" if pct < 30 else "✗ FAIL"
+    print(f"    {metric}: {pct:.1f}% missing {status}")
+
+# Criterion 2: Check measurement frequency per team-metric
+team_metric_pass = team_metric_coverage[
+    team_metric_coverage["percent_with_sufficient_measurements"] >= 70
+]
+
+print(f"\nCriterion 2 - Measurement Frequency:")
+print(f"  Team-metric combinations with ≥70% athlete coverage: {len(team_metric_pass)}/{len(team_metric_coverage)}")
+print(f"  Average coverage across all team-metric pairs: {avg_coverage:.1f}%")
+coverage_status = "✓ PASS" if avg_coverage >= 70 else "✗ FAIL"
+print(f"    {coverage_status}")
+
+# Overall assessment
+criteria_passed = [
+    len(metrics_below_threshold) == len(selected_metrics),
+    avg_coverage >= 70
+]
+
+print("\n" + "="*60)
+print("OVERALL DATA SUFFICIENCY ASSESSMENT")
+print("="*60)
+print(f"Criteria passed: {sum(criteria_passed)}/2")
+
+if sum(criteria_passed) == 2:
+    print("\n✓ CONCLUSION: We have SUFFICIENT data to answer the research question.")
+    print("  The dataset provides adequate coverage with minimal missing data")
+    print("  for meaningful longitudinal performance analysis and team comparisons.")
+elif sum(criteria_passed) == 1:
+    print("\n⚠ CONCLUSION: We have PARTIALLY SUFFICIENT data.")
+    print("  Analysis is possible but may have limitations in some areas.")
+    print("  Consider focusing on metrics/teams with better coverage.")
+else:
+    print("\n✗ CONCLUSION: Data may be INSUFFICIENT for robust analysis.")
+    print("  Significant gaps exist that may limit the reliability of findings.")
+
+print("="*60)
 
 
 # 2.2 Data Transformation (Group)
@@ -241,10 +295,10 @@ for metric_name in selected_metrics:
 
     print(f"\n--- Metric: {metric_name} ---")
     print("Top 5 performers (unique athletes):")
-    print(top5[["playername", "team", "value", "team_mean", "percent_diff","z_score", "session_type"]])
+    print(top5[["playername", "team", "value", "team_mean", "percent_diff","z_score"]])
 
     print("Bottom 5 performers (unique athletes):")
-    print(bottom5[["playername", "team", "value", "team_mean", "percent_diff","z_score", "session_type"]])
+    print(bottom5[["playername", "team", "value", "team_mean", "percent_diff","z_score"]])
 
     top_bottom_records.append(top5)
     top_bottom_records.append(bottom5)
