@@ -95,7 +95,10 @@ DB_PORT=3306
 DB_NAME=your_database
 ```
 Connection Template:
-```
+``
+from sqlalchemy import create_engine
+import pandas as pd
+# Connection string 
 engine = create_engine(
     "mysql+pymysql://username:password@host:port/database_name"
 )
@@ -106,6 +109,7 @@ df = pd.read_sql(query, engine)
 
 # Close connection when done
 engine.dispose()
+
 ```
 Successful Connection:
 - **Aima**:
