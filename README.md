@@ -53,5 +53,64 @@ This project analyzes a collegiate athletics performance database that integrate
 ├── part4_research_synthesis.pdf
 └── final_presentation.pdf
 ```
+## Setup Instructions
+1. Clone Repository
+```
+git clone https://github.com/aimachaudhry/507_groupproject_2025.git
+cd 507_groupproject_2025
+```
+2. Create Virtual Environment
+```
+python -m venv venv
 
+# macOS / Linux
+source venv/bin/activate
 
+# Windows
+venv\Scripts\activate
+```
+3. Install Dependencies
+```
+pip install -r requirements.txt
+```
+Required Libraries:
+```
+pandas
+SQLAlchemy
+pymysql
+matplotlib
+seaborn
+numpy
+scipy
+python-dotenv
+```
+
+## Database Connection
+Create .env file and fill in actual credentials:
+```
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+DB_HOST=your_host
+DB_PORT=3306
+DB_NAME=your_database
+```
+Connection Template:
+```
+engine = create_engine(
+    "mysql+pymysql://username:password@host:port/database_name"
+)
+
+# Example query
+query = "SELECT * FROM research_experiment_refactor_test LIMIT 10"
+df = pd.read_sql(query, engine)
+
+# Close connection when done
+engine.dispose()
+```
+Successful Connection:
+- **Aima**:
+- **Nabiha**:
+- **Nawal**:
+- **Breanna**:
+- **Jenny**:
+- **Rujula**:
