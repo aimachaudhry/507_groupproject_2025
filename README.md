@@ -95,7 +95,7 @@ DB_PORT=3306
 DB_NAME=your_database
 ```
 Connection Template:
-``
+```
 from sqlalchemy import create_engine
 import pandas as pd
 # Connection string 
@@ -109,8 +109,8 @@ df = pd.read_sql(query, engine)
 
 # Close connection when done
 engine.dispose()
-
 ```
+
 Successful Connection:
 - **Aima**:
 
