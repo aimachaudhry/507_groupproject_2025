@@ -143,7 +143,7 @@ print(f"\nCriterion 1 - Missing Data:")
 print(f"  Metrics with <30% missing/zero values: {len(metrics_below_threshold)}/{len(selected_metrics)}")
 for metric in selected_metrics:
     pct = missing_summary.loc[metric, "percent_missing"]
-    status = "✓ PASS" if pct < 30 else "✗ FAIL"
+    status = "PASS" if pct < 30 else "FAIL"
     print(f"    {metric}: {pct:.1f}% missing {status}")
 
 # Criterion 2: Check measurement frequency per team-metric
@@ -154,7 +154,7 @@ team_metric_pass = team_metric_coverage[
 print(f"\nCriterion 2 - Measurement Frequency:")
 print(f"  Team-metric combinations with ≥70% athlete coverage: {len(team_metric_pass)}/{len(team_metric_coverage)}")
 print(f"  Average coverage across all team-metric pairs: {avg_coverage:.1f}%")
-coverage_status = "✓ PASS" if avg_coverage >= 70 else "✗ FAIL"
+coverage_status = "PASS" if avg_coverage >= 70 else "FAIL"
 print(f"    {coverage_status}")
 
 # Overall assessment
@@ -163,24 +163,22 @@ criteria_passed = [
     avg_coverage >= 70
 ]
 
-print("\n" + "="*60)
 print("OVERALL DATA SUFFICIENCY ASSESSMENT")
-print("="*60)
 print(f"Criteria passed: {sum(criteria_passed)}/2")
 
 if sum(criteria_passed) == 2:
-    print("\n✓ CONCLUSION: We have SUFFICIENT data to answer the research question.")
+    print(" CONCLUSION: We have SUFFICIENT data to answer the research question.")
     print("  The dataset provides adequate coverage with minimal missing data")
     print("  for meaningful longitudinal performance analysis and team comparisons.")
 elif sum(criteria_passed) == 1:
-    print("\n⚠ CONCLUSION: We have PARTIALLY SUFFICIENT data.")
+    print(" CONCLUSION: We have PARTIALLY SUFFICIENT data.")
     print("  Analysis is possible but may have limitations in some areas.")
     print("  Consider focusing on metrics/teams with better coverage.")
 else:
     print("\n✗ CONCLUSION: Data may be INSUFFICIENT for robust analysis.")
     print("  Significant gaps exist that may limit the reliability of findings.")
 
-print("="*60)
+print()
 
 
 # 2.2 Data Transformation (Group)
