@@ -33,4 +33,25 @@ This project analyzes a collegiate athletics performance database that integrate
   - 1.3 Metric Discovery & Selection
   - 3.1 Individual Athlete Timeline
   - 4.3 Final Presentation (Key Findings)
+ 
+## Project Structure
+```
+507_groupproject_2025/
+├── README.md 
+├── references.md
+├── .env.example
+├── .gitignore
+├── part1_exploration.py
+├── part1_summary.pdf
+├── part1_literature_review.pdf
+├── part2_cleaning.py
+├── part3_viz_individual.ipynb
+├── part3_viz_comparison.ipynb
+├── part4_flags.py
+├── part4_flagged_athletes.csv
+├── part4_flag_justification.pdf
+├── part4_research_synthesis.pdf
+└── final_presentation.pdf
+```
+
 
