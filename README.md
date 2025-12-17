@@ -88,11 +88,11 @@ python-dotenv
 ## Database Connection
 Create .env file and fill in actual credentials:
 ```python
-DB_USERNAME=your_username
+DB_HOST=your_database_host
+DB_USER=your_username
 DB_PASSWORD=your_password
-DB_HOST=your_host
-DB_PORT=3306
-DB_NAME=your_database
+DB_NAME=database_name
+DB_TABLE=research_experiment_refactor_test
 ```
 Connection Template:
 ```python
@@ -131,8 +131,39 @@ Successful Connection:
 ## Running Each Script:
 
 ### Part 1: Database Connection & Data Exploration
+- ```part1_exploration.py```: Outputs summary statistics and metric counts by data source
+- ```part1_summary.pdf```: Summary report on data quality assessment of database
+-  ```part1_literature_review.pdf```: Literature review on selected metrics
+
+### Part 2: Data Cleaning & Transformation
 ```
-part1_exploration.py
+part2_cleaning.py
 ```
-Outputs summary statistics and metric counts by data source
+- Analyzes Missing Data
+- Transforms data from long to wide format
+- Calculates team-based derived metrics
+
+### Part 3: Longitudinal Analysis & Visualization
+
+1. Open notebook in Colab
+2. Create .env file and connect to the database by filling in actual credentials
+3. Run all cells
+
+```part3_viz_individual.ipynb```: Analyzes the performance trends of two athletes from men's basketball
+
+```part3_viz_comparison.ipynb```: Compares men's and women's basketball using t-tests and visualizations such as box plots
+
+### Part 4: Research Synthesis & Application
+```
+part4_flags.py
+```
+- Creates a **Performance Monitoring Flag System**
+- Generates ```part4_flagged_athletes.csv```
+- ```part4_flag_justification.pdf```: literature-based thresholds
+
+### Tableau Dashboard
+- [Link to Tableau Dashboard](https://public.tableau.com/app/profile/aima.chaudhry/viz/AthleticsPerformance/Dashboard2)
+- Creates visualizations of Data Quality, Team-Relative Performance, and Two-Athlete Performance Trends 
+
+
 
