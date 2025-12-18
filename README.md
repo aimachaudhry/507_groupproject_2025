@@ -126,6 +126,8 @@ Successful Connection:
 
 
 - **Jenny**:
+<img width="600" height="300" alt="Screenshot 2025-12-17 at 9 06 02 PM" src="https://github.com/user-attachments/assets/875742e6-177c-451f-bf8f-daf1834b3510" />
+
 - **Rujula**:
 <img width="600" height="300" alt="Screenshot 2025-12-17 at 4 28 24 PM" src="https://github.com/user-attachments/assets/443ea5df-1870-4342-8eea-b40d3df7694a" />
 
@@ -166,6 +168,7 @@ part4_flags.py
 ### Tableau Dashboard
 - [Link to Tableau Dashboard](https://public.tableau.com/app/profile/aima.chaudhry/viz/AthleticsPerformance/Dashboard2)
 - Creates visualizations of Data Quality, Team-Relative Performance, and Two-Athlete Performance Trends 
+
 
 
 
